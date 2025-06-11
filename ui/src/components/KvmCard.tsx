@@ -1,9 +1,10 @@
-import { Button, LinkButton } from "@components/Button";
-import Card from "@components/Card";
 import { MdConnectWithoutContact } from "react-icons/md";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import { LuEllipsisVertical } from "react-icons/lu";
+
+import Card from "@components/Card";
+import { Button, LinkButton } from "@components/Button";
 
 function getRelativeTimeString(date: Date | number, lang = navigator.language): string {
   // Allow dates or times to be passed
@@ -12,7 +13,7 @@ function getRelativeTimeString(date: Date | number, lang = navigator.language): 
   // Get the amount of seconds between the given date and now
   const deltaSeconds = Math.round((timeMs - Date.now()) / 1000);
 
-  // Array reprsenting one minute, hour, day, week, month, etc in seconds
+  // Array representing one minute, hour, day, week, month, etc in seconds
   const cutoffs = [60, 3600, 86400, 86400 * 7, 86400 * 30, 86400 * 365, Infinity];
 
   // Array equivalent to the above but in the string representation of the units
@@ -52,7 +53,7 @@ export default function KvmCard({
   return (
     <Card>
       <div className="px-5 py-5 space-y-3">
-        <div className="flex justify-between items-cente">
+        <div className="flex justify-between items-center">
           <div className="space-y-1.5">
             <div className="text-lg font-bold leading-none text-black dark:text-white">
               {title}
@@ -77,7 +78,7 @@ export default function KvmCard({
             )}
           </div>
         </div>
-        <div className="h-[1px] bg-slate-800/20 dark:bg-slate-300/20" />
+        <div className="h-px bg-slate-800/20 dark:bg-slate-300/20" />
         <div className="flex justify-between">
           <div>
             {online ? (
@@ -110,9 +111,9 @@ export default function KvmCard({
 
             <MenuItems
               transition
-              className="data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+              className="data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-leave:duration-75 data-enter:ease-out data-leave:ease-in"
             >
-              <Card className="absolute right-0 z-10 w-56 px-1 mt-2 transition origin-top-right ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <Card className="absolute right-0 z-10 w-56 px-1 mt-2 transition origin-top-right ring-1 ring-black/50 focus:outline-hidden">
                 <div className="divide-y divide-slate-800/20 dark:divide-slate-300/20">
                   <MenuItem>
                     <div>

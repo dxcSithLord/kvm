@@ -16,6 +16,9 @@ type TerminalSize struct {
 }
 
 func handleTerminalChannel(d *webrtc.DataChannel) {
+	scopedLogger := terminalLogger.With().
+		Uint16("data_channel_id", *d.ID()).Logger()
+
 	var ptmx *os.File
 	var cmd *exec.Cmd
 	d.OnOpen(func() {
@@ -23,7 +26,7 @@ func handleTerminalChannel(d *webrtc.DataChannel) {
 		var err error
 		ptmx, err = pty.Start(cmd)
 		if err != nil {
-			logger.Errorf("Failed to start pty: %v", err)
+			scopedLogger.Warn().Err(err).Msg("Failed to start pty")
 			d.Close()
 			return
 		}
@@ -34,13 +37,13 @@ func handleTerminalChannel(d *webrtc.DataChannel) {
 				n, err := ptmx.Read(buf)
 				if err != nil {
 					if err != io.EOF {
-						logger.Errorf("Failed to read from pty: %v", err)
+						scopedLogger.Warn().Err(err).Msg("Failed to read from pty")
 					}
 					break
 				}
 				err = d.Send(buf[:n])
 				if err != nil {
-					logger.Errorf("Failed to send pty output: %v", err)
+					scopedLogger.Warn().Err(err).Msg("Failed to send pty output")
 					break
 				}
 			}
@@ -55,17 +58,19 @@ func handleTerminalChannel(d *webrtc.DataChannel) {
 			var size TerminalSize
 			err := json.Unmarshal([]byte(msg.Data), &size)
 			if err == nil {
-				pty.Setsize(ptmx, &pty.Winsize{
+				err = pty.Setsize(ptmx, &pty.Winsize{
 					Rows: uint16(size.Rows),
 					Cols: uint16(size.Cols),
 				})
-				return
+				if err == nil {
+					return
+				}
 			}
-			logger.Errorf("Failed to parse terminal size: %v", err)
+			scopedLogger.Warn().Err(err).Msg("Failed to parse terminal size")
 		}
 		_, err := ptmx.Write(msg.Data)
 		if err != nil {
-			logger.Errorf("Failed to write to pty: %v", err)
+			scopedLogger.Warn().Err(err).Msg("Failed to write to pty")
 		}
 	})
 
@@ -74,7 +79,12 @@ func handleTerminalChannel(d *webrtc.DataChannel) {
 			ptmx.Close()
 		}
 		if cmd != nil && cmd.Process != nil {
-			cmd.Process.Kill()
+			_ = cmd.Process.Kill()
 		}
+		scopedLogger.Info().Msg("Terminal channel closed")
+	})
+
+	d.OnError(func(err error) {
+		scopedLogger.Warn().Err(err).Msg("Terminal channel error")
 	})
 }

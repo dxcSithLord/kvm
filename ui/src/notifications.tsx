@@ -1,8 +1,9 @@
 import toast, { Toast, Toaster, useToasterStore } from "react-hot-toast";
 import React, { useEffect } from "react";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/20/solid";
+
 import Card from "@/components/Card";
 
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/20/solid";
 
 interface NotificationOptions {
   duration?: number;
@@ -21,7 +22,7 @@ const ToastContent = ({
   <Card
     className={`${
       t.visible ? "animate-enter" : "animate-leave"
-    } pointer-events-auto z-30 w-full max-w-sm !shadow-xl`}
+    } pointer-events-auto z-30 w-full max-w-sm shadow-xl!`}
   >
     <div className="flex items-center gap-x-2 p-2.5 px-2">
       {icon}

@@ -1,12 +1,13 @@
 import { CheckIcon } from "@heroicons/react/16/solid";
+
 import { cva, cx } from "@/cva.config";
 import Card from "@/components/Card";
 
-type Props = {
+interface Props {
   nSteps: number;
   currStepIdx: number;
   size?: keyof typeof sizes;
-};
+}
 
 const sizes = {
   SM: "text-xs leading-[12px]",
@@ -22,7 +23,7 @@ const variants = cva({
 export default function StepCounter({ nSteps, currStepIdx, size = "MD" }: Props) {
   const textStyle = variants({ size });
   return (
-    <Card className="!inline-flex w-auto select-none items-center justify-center gap-x-2 rounded-lg p-1">
+    <Card className="inline-flex! w-auto select-none items-center justify-center gap-x-2 rounded-lg p-1">
       {[...Array(nSteps).keys()].map(i => {
         if (i < currStepIdx) {
           return (
@@ -43,7 +44,7 @@ export default function StepCounter({ nSteps, currStepIdx, size = "MD" }: Props)
           return (
             <div
               className={cx(
-                "rounded-md border border-blue-800 bg-blue-700 px-2 py-1 font-medium text-white shadow-sm dark:border-blue-300",
+                "rounded-md border border-blue-800 bg-blue-700 px-2 py-1 font-medium text-white shadow-xs dark:border-blue-300",
                 textStyle,
               )}
               key={`${i}-${currStepIdx}`}
@@ -56,7 +57,7 @@ export default function StepCounter({ nSteps, currStepIdx, size = "MD" }: Props)
           return (
             <Card
               className={cx(
-                "flex items-center justify-center !rounded-full text-slate-600 dark:text-slate-400",
+                "flex items-center justify-center rounded-full! text-slate-600 dark:text-slate-400",
                 textStyle,
                 size === "SM" ? "h-5 w-5" : "h-6 w-6",
               )}

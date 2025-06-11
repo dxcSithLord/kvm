@@ -1,8 +1,9 @@
-import React from "react";
+import React, { JSX } from "react";
+import { FetcherWithComponents, Link, LinkProps, useNavigation } from "react-router-dom";
+
 import ExtLink from "@/components/ExtLink";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { cva, cx } from "@/cva.config";
-import { FetcherWithComponents, Link, LinkProps, useNavigation } from "react-router-dom";
 
 const sizes = {
   XS: "h-[28px] px-2 text-xs",
@@ -15,7 +16,7 @@ const sizes = {
 const themes = {
   primary: cx(
     // Base styles
-    "bg-blue-700 dark:border-blue-600 border border-blue-900/60 text-white shadow",
+    "bg-blue-700 dark:border-blue-600 border border-blue-900/60 text-white shadow-sm",
     // Hover states
     "group-hover:bg-blue-800",
     // Active states
@@ -23,7 +24,7 @@ const themes = {
   ),
   danger: cx(
     // Base styles
-    "bg-red-600 text-white border-red-700 shadow-sm shadow-red-200/80 dark:border-red-600 dark:shadow-red-900/20",
+    "bg-red-600 text-white border-red-700 shadow-xs shadow-red-200/80 dark:border-red-600 dark:shadow-red-900/20",
     // Hover states
     "group-hover:bg-red-700 group-hover:border-red-800 dark:group-hover:bg-red-700 dark:group-hover:border-red-600",
     // Active states
@@ -33,7 +34,7 @@ const themes = {
   ),
   light: cx(
     // Base styles
-    "bg-white text-black border-slate-800/30 shadow dark:bg-slate-800 dark:border-slate-300/20 dark:text-white",
+    "bg-white text-black border-slate-800/30 shadow-xs dark:bg-slate-800 dark:border-slate-300/20 dark:text-white",
     // Hover states
     "group-hover:bg-blue-50/80 dark:group-hover:bg-slate-700",
     // Active states
@@ -43,7 +44,7 @@ const themes = {
   ),
   lightDanger: cx(
     // Base styles
-    "bg-white text-black border-red-400/60 shadow-sm",
+    "bg-white text-black border-red-400/60 shadow-xs",
     // Hover states
     "group-hover:bg-red-50/80",
     // Active states
@@ -55,7 +56,7 @@ const themes = {
     // Base styles
     "bg-white/0 text-black border-transparent dark:text-white",
     // Hover states
-    "group-hover:bg-white group-hover:border-slate-800/30 group-hover:shadow dark:group-hover:bg-slate-700 dark:group-hover:border-slate-600",
+    "group-hover:bg-white group-hover:border-slate-800/30 group-hover:shadow-sm dark:group-hover:bg-slate-700 dark:group-hover:border-slate-600",
     // Active states
     "group-active:bg-slate-100/80",
   ),
@@ -64,15 +65,15 @@ const themes = {
 const btnVariants = cva({
   base: cx(
     // Base styles
-    "border rounded select-none",
+    "border rounded-sm select-none",
     // Size classes
     "justify-center items-center shrink-0",
     // Transition classes
-    "outline-none transition-all duration-200",
+    "outline-hidden transition-all duration-200",
     // Text classes
     "font-display text-center font-medium leading-tight",
     // States
-    "group-focus:outline-none group-focus:ring-2 group-focus:ring-offset-2 group-focus:ring-blue-700",
+    "group-focus:outline-hidden group-focus:ring-2 group-focus:ring-offset-2 group-focus:ring-blue-700",
     "group-disabled:opacity-50 group-disabled:pointer-events-none",
   ),
 
@@ -101,7 +102,7 @@ const iconVariants = cva({
   },
 });
 
-type ButtonContentPropsType = {
+interface ButtonContentPropsType {
   text?: string | React.ReactNode;
   LeadingIcon?: React.FC<{ className: string | undefined }> | null;
   TrailingIcon?: React.FC<{ className: string | undefined }> | null;
@@ -111,7 +112,7 @@ type ButtonContentPropsType = {
   size: keyof typeof sizes;
   theme: keyof typeof themes;
   loading?: boolean;
-};
+}
 
 function ButtonContent(props: ButtonContentPropsType) {
   const { text, LeadingIcon, TrailingIcon, fullWidth, className, textAlign, loading } =
@@ -125,9 +126,9 @@ function ButtonContent(props: ButtonContentPropsType) {
       <div
         className={cx(
           "flex w-full min-w-0 items-center gap-x-1.5 text-center",
-          textAlign === "left" ? "!text-left" : "",
-          textAlign === "center" ? "!text-center" : "",
-          textAlign === "right" ? "!text-right" : "",
+          textAlign === "left" ? "text-left!" : "",
+          textAlign === "center" ? "text-center!" : "",
+          textAlign === "right" ? "text-right!" : "",
         )}
       >
         {loading ? (
@@ -156,7 +157,16 @@ function ButtonContent(props: ButtonContentPropsType) {
 
 type ButtonPropsType = Pick<
   JSX.IntrinsicElements["button"],
-  "type" | "disabled" | "onClick" | "name" | "value" | "formNoValidate" | "onMouseLeave"
+  | "type"
+  | "disabled"
+  | "onClick"
+  | "name"
+  | "value"
+  | "formNoValidate"
+  | "onMouseLeave"
+  | "onMouseDown"
+  | "onMouseUp"
+  | "onMouseLeave"
 > &
   React.ComponentProps<typeof ButtonContent> & {
     fetcher?: FetcherWithComponents<unknown>;
@@ -165,7 +175,7 @@ type ButtonPropsType = Pick<
 export const Button = React.forwardRef<HTMLButtonElement, ButtonPropsType>(
   ({ type, disabled, onClick, formNoValidate, loading, fetcher, ...props }, ref) => {
     const classes = cx(
-      "group outline-none",
+      "group outline-hidden",
       props.fullWidth ? "w-full" : "",
       loading ? "pointer-events-none" : "",
     );
@@ -179,6 +189,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonPropsType>(
         type={type}
         disabled={disabled}
         onClick={onClick}
+        onMouseDown={props?.onMouseDown}
+        onMouseUp={props?.onMouseUp}
+        onMouseLeave={props?.onMouseLeave}
         name={props.name}
         value={props.value}
       >
@@ -202,8 +215,8 @@ type LinkPropsType = Pick<LinkProps, "to"> &
   React.ComponentProps<typeof ButtonContent> & { disabled?: boolean };
 export const LinkButton = ({ to, ...props }: LinkPropsType) => {
   const classes = cx(
-    "group outline-none",
-    props.disabled ? "pointer-events-none !opacity-70" : "",
+    "group outline-hidden",
+    props.disabled ? "pointer-events-none opacity-70!" : "",
     props.fullWidth ? "w-full" : "",
     props.loading ? "pointer-events-none" : "",
     props.className,
@@ -228,8 +241,8 @@ type LabelPropsType = Pick<HTMLLabelElement, "htmlFor"> &
   React.ComponentProps<typeof ButtonContent> & { disabled?: boolean };
 export const LabelButton = ({ htmlFor, ...props }: LabelPropsType) => {
   const classes = cx(
-    "group outline-none block cursor-pointer",
-    props.disabled ? "pointer-events-none !opacity-70" : "",
+    "group outline-hidden block cursor-pointer",
+    props.disabled ? "pointer-events-none opacity-70!" : "",
     props.fullWidth ? "w-full" : "",
     props.loading ? "pointer-events-none" : "",
     props.className,

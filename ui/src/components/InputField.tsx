@@ -1,7 +1,8 @@
 import type { Ref } from "react";
-import React, { forwardRef } from "react";
-import FieldLabel from "@/components/FieldLabel";
+import React, { forwardRef, JSX } from "react";
 import clsx from "clsx";
+
+import FieldLabel from "@/components/FieldLabel";
 import Card from "@/components/Card";
 import { cva } from "@/cva.config";
 
@@ -43,7 +44,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(function InputF
           "[&:has(:user-invalid)]:ring-2 [&:has(:user-invalid)]:ring-red-600 [&:has(:user-invalid)]:ring-offset-2",
 
           // Focus Within
-          "focus-within:border-slate-300 dark:focus-within:border-slate-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-offset-2",
+          "focus-within:border-slate-300 dark:focus-within:border-slate-600 focus-within:outline-hidden focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-offset-2",
 
           // Disabled Within
           "disabled-within:pointer-events-none disabled-within:select-none disabled-within:bg-slate-50 dark:disabled-within:bg-slate-800 disabled-within:text-slate-500/80",
@@ -84,7 +85,7 @@ const InputFieldWithLabel = forwardRef<HTMLInputElement, InputFieldWithLabelProp
         {(label || description) && (
           <FieldLabel label={label} id={id} description={description} />
         )}
-        <InputField ref={ref as any} id={id} {...props} />
+        <InputField ref={ref as never} id={id} {...props} />
       </div>
     );
   },
